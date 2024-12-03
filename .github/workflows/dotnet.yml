@@ -23,7 +23,12 @@ jobs:
         with:
           dotnet-version: '6.x'  # Ensures .NET 6 SDK is installed
 
-      # Step 3: Ensure .NET 6 is used with a global.json (if not already present in the repo)
+      # Step 3: Verify the .NET SDK version
+      - name: Print .NET SDK version
+        run: |
+          dotnet --version  # Print the installed .NET SDK version
+
+      # Step 4: Ensure .NET 6 is used with a global.json (if not already present in the repo)
       - name: Create global.json if not exists
         run: |
           if (-not (Test-Path 'global.json')) {
@@ -35,16 +40,16 @@ jobs:
             }' > global.json
           }
 
-      # Step 4: Restore dependencies with specified parameters
+      # Step 5: Restore dependencies with specified parameters
       - name: Restore dependencies
         run: |
-          dotnet restore ./dotnet_restore_task_newone /p:zipAfterPublish=true /p:modifyOutputPath=true /p:selectOrConfig=config /p:feedRestore="" /p:includeNuGetOrg=true
+          dotnet restore ./dotnet_restore_task_newone/dotnet_restore_task_newone.csproj /p:zipAfterPublish=true /p:modifyOutputPath=true /p:selectOrConfig=config /p:feedRestore="" /p:includeNuGetOrg=true
 
-      # Step 5: Build the application
+      # Step 6: Build the application
       - name: Build application
-        run: dotnet build ./dotnet_restore_task_newone --configuration Release
+        run: dotnet build ./dotnet_restore_task_newone/dotnet_restore_task_newone.csproj --configuration Release
 
-      # Step 6: Run the application
+      # Step 7: Run the application
       - name: Run application
         run: |
-          dotnet run --project ./dotnet_restore_task_newone --configuration Release
+          dotnet run --project ./dotnet_restore_task_newone/dotnet_restore_task_newone.csproj --configuration Release
