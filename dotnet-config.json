@@ -1,0 +1,13 @@
+{
+ "publishWebProjects": "true",
+ "projects": "**/*.csproj",
+ "custom": "",
+ "arguments": "",
+ "publishTestResults": "true",
+ "testRunTitle": "",
+ "zipAfterPublish": "true",
+ "modifyOutputPath": "true",
+ "selectOrConfig": "config",
+ "feedRestore": "",
+ "includeNuGetOrg": "true"
+}
