@@ -38,7 +38,7 @@ jobs:
       # Step 4: Restore dependencies with specified parameters
       - name: Restore dependencies
         run: |
-          dotnet restore ./dotnet_restore_task_newone --property zipAfterPublish=true --property modifyOutputPath=true --property selectOrConfig=config --property feedRestore="" --property includeNuGetOrg=true
+          dotnet restore ./dotnet_restore_task_newone /p:zipAfterPublish=true /p:modifyOutputPath=true /p:selectOrConfig=config /p:feedRestore="" /p:includeNuGetOrg=true
 
       # Step 5: Build the application
       - name: Build application
