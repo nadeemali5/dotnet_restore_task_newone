@@ -1,4 +1,4 @@
-name: .NET CI/CD
+name: .NET 6 Build, Restore, and Run
 
 on:
   push:
@@ -13,87 +13,42 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
+      # Step 1: Checkout the code from the repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      # Create global.json to specify .NET 6.0 SDK version explicitly
-      - name: Create global.json to use .NET 6.0 SDK
-        run: |
-          echo '{ "sdk": { "version": "6.0.428", "rollForward": "disable" } }' > global.json
-
-      # Set up .NET SDK 6.0
-      - name: Set up .NET SDK 6.0
+      # Step 2: Set up .NET 6 SDK
+      - name: Set up .NET 6 SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0'
+          dotnet-version: '6.x'  # Ensure .NET 6 is used
 
-      # Verify that .NET 6.0 SDK is being used
-      - name: Verify .NET version
+      # Step 3: Ensure .NET 6 is used with a global.json (if not already present in the repo)
+      - name: Create global.json if not exists
         run: |
-          dotnet --version
+          if (-not (Test-Path 'global.json')) {
+            Write-Host "Creating global.json to specify .NET 6 SDK"
+            echo '{
+              "sdk": {
+                "version": "6.0.0"
+              }
+            }' > global.json
+          }
 
-      # List directory contents to confirm structure
-      - name: List directory contents
-        run: dir
-
-      # Read configuration from JSON file (PowerShell)
-      - name: Read configuration from dotnet-config.json
-        id: read_config
-        shell: pwsh
+      # Step 4: Restore dependencies with specified parameters
+      - name: Restore dependencies
         run: |
-          # Read the JSON config file
-          $config = Get-Content -Raw -Path "dotnet-config.json" | ConvertFrom-Json
+          dotnet restore /p:zipAfterPublish=true \
+                          /p:modifyOutputPath=true \
+                          /p:selectOrConfig=config \
+                          /p:feedRestore="" \
+                          /p:includeNuGetOrg=true
 
-          # Set values as environment variables
-          echo "CUSTOM=$($config.custom)" >> $env:GITHUB_ENV
-          echo "ARGUMENTS=$($config.arguments)" >> $env:GITHUB_ENV
-          echo "TEST_RUN_TITLE=$($config.testRunTitle)" >> $env:GITHUB_ENV
-          echo "MODIFY_OUTPUT_PATH=$($config.modifyOutputPath)" >> $env:GITHUB_ENV
-          echo "SELECT_OR_CONFIG=$($config.selectOrConfig)" >> $env:GITHUB_ENV
-          echo "FEED_RESTORE=$($config.feedRestore)" >> $env:GITHUB_ENV
-          echo "INCLUDE_NUGET_ORG=$($config.includeNuGetOrg)" >> $env:GITHUB_ENV
+      # Step 5: Build the application
+      - name: Build application
+        run: dotnet build --configuration Release
 
-      # Save .NET CLI arguments to a file, filtering out empty values
-      - name: Save .NET CLI arguments to a file
+      # Step 6: Run the application
+      - name: Run application
         run: |
-          # Prepare the arguments for the build, ensuring no empty properties are passed
-          $args = @(
-            "--configuration Release"
-          )
-
-          # Add properties only if they are not empty
-          if ($env:CUSTOM) { $args += "-p:Custom=$($env:CUSTOM)" }
-          if ($env:ARGUMENTS) { $args += "-p:Arguments=$($env:ARGUMENTS)" }
-          if ($env:MODIFY_OUTPUT_PATH) { $args += "-p:ModifyOutputPath=$($env:MODIFY_OUTPUT_PATH)" }
-          if ($env:SELECT_OR_CONFIG) { $args += "-p:SelectOrConfig=$($env:SELECT_OR_CONFIG)" }
-          if ($env:FEED_RESTORE) { $args += "-p:FeedRestore=$($env:FEED_RESTORE)" }
-          if ($env:INCLUDE_NUGET_ORG) { $args += "-p:IncludeNuGetOrg=$($env:INCLUDE_NUGET_ORG)" }
-
-          # Write the arguments to args.txt
-          $args | Out-File -FilePath args.txt
-
-          # Output args.txt contents for debugging
-          cat args.txt
-
-      # Run dotnet msbuild with custom arguments from args.txt (ensure no conflicting switches)
-      - name: Run dotnet msbuild with custom arguments
-        shell: pwsh
-        run: |
-          # Read arguments from args.txt into an array
-          $args = Get-Content -Path args.txt | ForEach-Object { $_.Trim() }
-
-          # Ensure there are no empty arguments
-          $args = $args | Where-Object { $_ -ne "" }
-
-          # Construct the MSBuild command with only the required arguments
-          $buildArgs = $args -join ' '  # Join the arguments into a single string
-
-          # Remove problematic flags if they are passed in args.txt (such as -maxcpucount, -verbosity:m)
-          $buildArgs = $buildArgs -replace "-maxcpucount", "/maxcpucount:1"
-          $buildArgs = $buildArgs -replace "-verbosity:m", "/verbosity:minimal"
-
-          # Run the MSBuild command
-          dotnet msbuild MyDotnetApp.sln $buildArgs /nologo /maxcpucount:1 /verbosity:minimal
-
-      - name: Run the application
-        run: dotnet run --project MyDotnetApp\MyDotnetApp.csproj
+          dotnet run --configuration Release
