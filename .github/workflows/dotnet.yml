@@ -41,16 +41,17 @@ jobs:
         run: |
           dotnet --version  # Should show 6.x version
 
-      # Step 5: Restore dependencies with specified parameters
+      # Step 5: Restore dependencies using the solution file (.sln)
+      # Use the solution file instead of the .csproj file for restore
       - name: Restore dependencies
         run: |
-          dotnet restore ./dotnet_restore_task_newone/dotnet_restore_task_newone.csproj /p:zipAfterPublish=true /p:modifyOutputPath=true /p:selectOrConfig=config /p:feedRestore="" /p:includeNuGetOrg=true
+          dotnet restore MyDotnetApp.sln /p:zipAfterPublish=true /p:modifyOutputPath=true /p:selectOrConfig=config /p:feedRestore="" /p:includeNuGetOrg=true
 
-      # Step 6: Build the application
+      # Step 6: Build the application using the solution file (.sln)
       - name: Build application
-        run: dotnet build ./dotnet_restore_task_newone/dotnet_restore_task_newone.csproj --configuration Release
+        run: dotnet build MyDotnetApp.sln --configuration Release
 
-      # Step 7: Run the application
+      # Step 7: Run the application using the solution file (.sln)
       - name: Run application
         run: |
-          dotnet run --project ./dotnet_restore_task_newone/dotnet_restore_task_newone.csproj --configuration Release
+          dotnet run --project MyDotnetApp.csproj --configuration Release
