@@ -17,28 +17,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up .NET 6 SDK (ensures .NET 6 is installed)
+      # Step 2: Ensure .NET 6 SDK is installed using actions/setup-dotnet
       - name: Set up .NET 6 SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.x'  # Ensure .NET 6 is used across all steps
+          dotnet-version: '6.x'  # Ensure .NET 6 SDK is installed
 
-      # Step 3: Print the installed .NET SDK version to verify it's using .NET 6
-      - name: Print .NET SDK version
-        run: |
-          dotnet --version  # Should show 6.x version
-
-      # Step 4: Ensure .NET 6 is used with a global.json (if not already present in the repo)
-      - name: Create global.json if not exists
+      # Step 3: Create global.json to lock the .NET SDK version and disable roll-forward
+      - name: Create global.json to specify .NET 6 version
         run: |
           if (-not (Test-Path 'global.json')) {
             Write-Host "Creating global.json to specify .NET 6 SDK"
             echo '{
               "sdk": {
-                "version": "6.0.100"
+                "version": "6.0.428",
+                "rollForward": "disable"
               }
             }' > global.json
           }
+
+      # Step 4: Print the installed .NET SDK version to verify it's using .NET 6
+      - name: Print .NET SDK version
+        run: |
+          dotnet --version  # Should show 6.x version
 
       # Step 5: Restore dependencies with specified parameters
       - name: Restore dependencies
