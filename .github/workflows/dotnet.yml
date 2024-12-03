@@ -17,16 +17,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up .NET 6 SDK
+      # Step 2: Set up .NET 6 SDK (ensures .NET 6 is installed)
       - name: Set up .NET 6 SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.x'  # Ensures .NET 6 SDK is installed
+          dotnet-version: '6.x'  # Ensure .NET 6 is used across all steps
 
-      # Step 3: Verify the .NET SDK version
+      # Step 3: Print the installed .NET SDK version to verify it's using .NET 6
       - name: Print .NET SDK version
         run: |
-          dotnet --version  # Print the installed .NET SDK version
+          dotnet --version  # Should show 6.x version
 
       # Step 4: Ensure .NET 6 is used with a global.json (if not already present in the repo)
       - name: Create global.json if not exists
