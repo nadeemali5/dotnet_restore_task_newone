@@ -21,7 +21,7 @@ jobs:
       - name: Set up .NET 6 SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.x'  # Ensure .NET 6 is used
+          dotnet-version: '6.x'  # Ensures .NET 6 SDK is installed
 
       # Step 3: Ensure .NET 6 is used with a global.json (if not already present in the repo)
       - name: Create global.json if not exists
@@ -30,7 +30,7 @@ jobs:
             Write-Host "Creating global.json to specify .NET 6 SDK"
             echo '{
               "sdk": {
-                "version": "6.0.0"
+                "version": "6.0.100"
               }
             }' > global.json
           }
@@ -38,13 +38,13 @@ jobs:
       # Step 4: Restore dependencies with specified parameters
       - name: Restore dependencies
         run: |
-          dotnet restore --property zipAfterPublish=true --property modifyOutputPath=true --property selectOrConfig=config --property feedRestore="" --property includeNuGetOrg=true
+          dotnet restore ./dotnet_restore_task_newone --property zipAfterPublish=true --property modifyOutputPath=true --property selectOrConfig=config --property feedRestore="" --property includeNuGetOrg=true
 
       # Step 5: Build the application
       - name: Build application
-        run: dotnet build --configuration Release
+        run: dotnet build ./dotnet_restore_task_newone --configuration Release
 
       # Step 6: Run the application
       - name: Run application
         run: |
-          dotnet run --configuration Release
+          dotnet run --project ./dotnet_restore_task_newone --configuration Release
