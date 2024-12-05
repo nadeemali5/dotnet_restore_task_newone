@@ -11,7 +11,7 @@ jobs:
     with:
       branch_or_tag: ${{ github.ref_name }}
       publishWebProjects: true 
-      projects: "**/*.csproj"
+      projects: '**/*.csproj'
       custom: ""
       arguments: "" 
       publishTestResults: true
@@ -31,7 +31,7 @@ jobs:
       feedPublish: ""
       publishPackageMetadata: true
       externalEndpoint: "" 
-      searchPatternPack: "**/*.csproj"
+      searchPatternPack: '**/*.csproj'
       configurationToPack: Release
       outputDir: $GITHUB_WORKSPACE/staging/ 
       nobuild: false
