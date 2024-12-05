@@ -10,3 +10,38 @@ jobs:
     uses: nadeemali5/Called_Workflow_Module/.github/workflows/dotnet.yml@main  # Reusable workflow call
     with:
       branch_or_tag: ${{ github.ref_name }}
+      publishWebProjects: true 
+      projects: "**/*.csproj"
+      custom: ""
+      arguments: "" 
+      publishTestResults: true
+      testRunTitle: true
+      zipAfterPublish: true
+      modifyOutputPath: true
+      selectOrConfig: config
+      feedRestore: "" 
+      includeNuGetOrg: true
+      nugetConfigPath: test
+      externalEndpoints: "" 
+      noCache: false
+      packagesDirectory: "" 
+      verbosityRestore: Diagnostic
+      searchPatternPush: $GITHUB_WORKSPACE/staging/*.nupkg
+      nuGetFeedType: internal
+      feedPublish: ""
+      publishPackageMetadata: true
+      externalEndpoint: "" 
+      searchPatternPack: "**/*.csproj"
+      configurationToPack: ${{ env.Configuration }}
+      outputDir: $GITHUB_WORKSPACE/staging/ 
+      nobuild: false
+      includesymbols: false
+      includesource: false
+      versioningScheme: off
+      versionEnvVar: ""
+      requestedMajorVersion: 1
+      requestedMinorVersion: 0
+      requestedPatchVersion: 0
+      buildProperties: ""
+      verbosityPack: Detailed
+      workingDirectory: ""
