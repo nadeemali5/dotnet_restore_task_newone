@@ -1,69 +1,13 @@
-name: .NET 6 Build, Restore, and Run
+name: Calling dotnet Pipeline module
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
-
-env:
-  Configuration: 'Release'  # Define Configuration variable here
 
 jobs:
-  build:
-    runs-on: windows-latest    
-
-    steps:
-      # Step 1: Checkout the code from the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Step 2: Ensure .NET 6 SDK is installed using actions/setup-dotnet
-      - name: Set up .NET 6 SDK
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '6.x'  # Ensure .NET 6 SDK is installed
-
-      # Step 3: Create global.json to lock the .NET SDK version and disable roll-forward
-      - name: Create global.json to specify .NET 6 version
-        run: |
-          if (-not (Test-Path 'global.json')) {
-            Write-Host "Creating global.json to specify .NET 6 SDK"
-            echo '{
-              "sdk": {
-                "version": "6.0.428",
-                "rollForward": "disable"
-              }
-            }' > global.json
-          }
-
-      # Step 4: Print the installed .NET SDK version to verify it's using .NET 6
-      - name: Print .NET SDK version
-        run: |
-          dotnet --version  # Should show 6.x version
-
-      - name: New Steps added for creating staging directory
-        run: mkdir -p $GITHUB_WORKSPACE/staging
-        
-
-      # Step 5: Restore dependencies using the solution file (.sln)
-      # Use the solution file instead of the .csproj file for restore
-      - name: Restore dependencies
-        run: |
-          dotnet restore MyDotnetApp.sln /p:publishWebProjects=true /p:projects=**/*.csproj /p:custom="" /p:arguments="" /p:publishTestResults=true /p:testRunTitle=true /p:zipAfterPublish=true /p:modifyOutputPath=true /p:selectOrConfig=config /p:feedRestore="" /p:includeNuGetOrg=true /p:nugetConfigPath=test /p:externalEndpoints="" /p:noCache=false /p:packagesDirectory="" /p:verbosityRestore=Diagnostic /p:searchPatternPush=$GITHUB_WORKSPACE/staging/*.nupkg /p:nuGetFeedType=internal /p:feedPublish="" /p:publishPackageMetadata=true /p:externalEndpoint="" /p:searchPatternPack=**/*.csproj /p:configurationToPack=${{ env.Configuration }} /p:outputDir=$GITHUB_WORKSPACE/staging/ /p:nobuild=false /p:includesymbols=false /p:includesource=false /p:versioningScheme=off /p:versionEnvVar="" /p:requestedMajorVersion=1 /p:requestedMinorVersion=0 /p:requestedPatchVersion=0 /p:buildProperties="" /p:verbosityPack=Detailed /p:workingDirectory=""
-
-      # Step 6: Build the application using the solution file (.sln)
-      - name: Build application
-        run: dotnet build MyDotnetApp.sln /p:publishWebProjects=true /p:projects=**/*.csproj /p:custom="" /p:arguments="" /p:publishTestResults=true /p:testRunTitle=true /p:zipAfterPublish=true /p:modifyOutputPath=true /p:selectOrConfig=config /p:feedRestore="" /p:includeNuGetOrg=true /p:nugetConfigPath=test /p:externalEndpoints="" /p:noCache=false /p:packagesDirectory="" /p:verbosityRestore=Diagnostic /p:searchPatternPush=$GITHUB_WORKSPACE/staging/*.nupkg /p:nuGetFeedType=internal /p:feedPublish="" /p:publishPackageMetadata=true /p:externalEndpoint="" /p:searchPatternPack=**/*.csproj /p:configurationToPack=${{ env.Configuration }} /p:outputDir=$GITHUB_WORKSPACE/staging/ /p:nobuild=false /p:includesymbols=false /p:includesource=false /p:versioningScheme=off /p:versionEnvVar="" /p:requestedMajorVersion=1 /p:requestedMinorVersion=0 /p:requestedPatchVersion=0 /p:buildProperties="" /p:verbosityPack=Detailed /p:workingDirectory="" --configuration Release
-
-        # Step 7: Publish the application (this step prepares the app for deployment)
-      - name: Publish application
-        run: |
-          dotnet publish MyDotnetApp.sln /p:publishWebProjects=true /p:projects="" /p:custom="" /p:arguments="" /p:publishTestResults=true /p:testRunTitle="" /p:zipAfterPublish=false /p:modifyOutputPath=false /p:selectOrConfig=select /p:feedRestore="" /p:includeNuGetOrg=true /p:nugetConfigPath="" /p:externalEndpoints="" /p:noCache=false /p:packagesDirectory="" /p:verbosityRestore=Detailed /p:searchPatternPush="" /p:nuGetFeedType=internal /p:feedPublish="" /p:publishPackageMetadata=true /p:externalEndpoint="" /p:searchPatternPack="" /p:configurationToPack="" /p:outputDir="" /p:nobuild=false /p:includesymbols=false /p:includesource=false /p:versioningScheme=off /p:versionEnvVar"" /p:requestedMajorVersion="" /p:requestedMinorVersion=0 /p:requestedPatchVersion=0 /p:buildProperties="" /p:verbosityPack=Detailed /p:workingDirectory=""
-
-      # Step 8: Run the application using the solution file (.sln)
-      - name: Run application
-        run: |
-          dotnet run --project MyDotnetApp.csproj --configuration Release
+  call-task-pipeline:
+    uses: Called_Workflow_Module/.github/workflows/dotnet.yml@main  # Reusable workflow call
+    with:
+      branch_or_tag: ${{ github.ref_name }}  # Pass the branch or tag name from the current push event
+    secrets: inherit  # If you have secrets in the repository, inherit them
