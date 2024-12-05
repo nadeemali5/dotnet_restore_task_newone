@@ -7,7 +7,7 @@ on:
 
 jobs:
   call-task-pipeline:
-    uses: Called_Workflow_Module/.github/workflows/dotnet.yml@main  # Reusable workflow call
+    uses: nadeemali5/Called_Workflow_Module/.github/workflows/dotnet.yml@main  # Reusable workflow call
     with:
       branch_or_tag: ${{ github.ref_name }}  # Pass the branch or tag name from the current push event
     secrets: inherit  # If you have secrets in the repository, inherit them
