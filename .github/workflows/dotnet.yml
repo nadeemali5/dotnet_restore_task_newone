@@ -32,7 +32,7 @@ jobs:
       publishPackageMetadata: true
       externalEndpoint: "" 
       searchPatternPack: "**/*.csproj"
-      configurationToPack: ${{ env.Configuration }}
+      configurationToPack: Release
       outputDir: $GITHUB_WORKSPACE/staging/ 
       nobuild: false
       includesymbols: false
