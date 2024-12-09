@@ -26,14 +26,14 @@ jobs:
       noCache: false
       packagesDirectory: "" 
       verbosityRestore: Diagnostic
-      searchPatternPush: $GITHUB_WORKSPACE/staging/*.nupkg
+      searchPatternPush: "$GITHUB_WORKSPACE/staging/*.nupkg"
       nuGetFeedType: internal
       feedPublish: ""
       publishPackageMetadata: true
       externalEndpoint: "" 
       searchPatternPack: ""
       configurationToPack: Release
-      outputDir: $GITHUB_WORKSPACE/staging/ 
+      outputDir: "$GITHUB_WORKSPACE/staging/"
       nobuild: false
       includesymbols: false
       includesource: false
