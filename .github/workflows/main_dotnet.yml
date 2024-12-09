@@ -26,7 +26,7 @@ jobs:
       noCache: false
       packagesDirectory: "" 
       verbosityRestore: Diagnostic
-      searchPatternPush: "$GITHUB_WORKSPACE/staging/*.nupkg"
+      searchPatternPush: ""
       nuGetFeedType: internal
       feedPublish: ""
       publishPackageMetadata: true
