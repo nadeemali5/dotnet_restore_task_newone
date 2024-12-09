@@ -1,4 +1,4 @@
-name: Calling dotnet Pipeline module....
+name: Calling dotnet Pipeline module
 
 on:
   push:
@@ -45,4 +45,4 @@ jobs:
       buildProperties: ""
       verbosityPack: Detailed
       workingDirectory: ""
-      task: "dotnet restore"
+      task: 'dotnet restore'
