@@ -33,7 +33,7 @@ jobs:
       externalEndpoint: "" 
       searchPatternPack: ""
       configurationToPack: Release
-      outputDir: "$GITHUB_WORKSPACE/staging/"
+      outputDir: ""
       nobuild: false
       includesymbols: false
       includesource: false
