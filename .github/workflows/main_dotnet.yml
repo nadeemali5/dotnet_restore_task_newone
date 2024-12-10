@@ -1,4 +1,4 @@
-name: Calling dotnet Pipeline module
+name: Calling dotnet Pipeline module.
 
 on:
   push:
